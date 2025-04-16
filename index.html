@@ -1,180 +1,181 @@
-<html lang="zh-CN"><head>
-    <meta charset="UTF-8">
-    <title>自动售货机模拟器</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #f0f0f0;
-        }
-
-        #vending-machine {
-            background: #ffffff;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.2);
-        }
-
-        .status-light {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            margin: 10px 0;
-            background: grey;
-        }
-
-        .red-light {
-            background: #ff4444;
-            box-shadow: 0 0 10px #ff0000;
-        }
-
-        .control-panel {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        button {
-            padding: 12px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        button:hover {
-            filter: brightness(1.1);
-        }
-
-        .coin-btn {
-            background: #FFD700;
-            color: #333;
-        }
-
-        .drink-btn {
-            background: #4CAF50;
-            color: white;
-        }
-
-        .info-panel {
-            margin-top: 20px;
-            padding: 15px;
-            background: #e3f2fd;
-            border-radius: 5px;
-        }
-
-        #log {
-            margin-top: 10px;
-            padding: 10px;
-            background: white;
-            border: 1px solid #ddd;
-            min-height: 100px;
-        }
-    </style>
-</head>
-<body>
-<div id="vending-machine">
-    <h2>饮料自动售货机（5角/瓶）</h2>
-    <div class="status-light" id="statusLight"></div>
-
-    <div class="control-panel">
-        <div>
-            <h3>投币区</h3>
-            <button class="coin-btn" onclick="insertCoin(0.5)">投入5角硬币</button>
-            <button class="coin-btn" onclick="insertCoin(1)">投入1元硬币</button>
-        </div>
-
-        <div>
-            <h3>饮料选择</h3>
-            <button class="drink-btn" onclick="selectDrink('橙汁')">橙汁</button>
-            <button class="drink-btn" onclick="selectDrink('啤酒')">啤酒</button>
-        </div>
-    </div>
-
-    <div class="info-panel">
-        <h4>系统状态</h4>
-        <div>剩余零钱：<span id="changeCount">5</span>个5角硬币</div>
-        <button onclick="refillChange()">补充零钱</button>
-
-        <h4>操作记录</h4>
-        <div id="log"></div>
-    </div>
-</div>
-
-<script>
-    let state = {
-        currentCoin: 0,
-        changeAvailable: 5, // 初始5个5角硬币
-        redLightOn: false
-    };
-
-    // 新增：自动检测零钱状态
-    function checkChangeStatus() {
-        state.redLightOn = state.changeAvailable === 0;
-        updateStatusLight();
-    }
-
-    function updateStatusLight() {
-        const light = document.getElementById('statusLight');
-        light.className = state.redLightOn ? 'status-light red-light' : 'status-light';
-    }
-
-    function insertCoin(amount) {
-        state.currentCoin = amount;
-        addLog(`已投入${amount}元`);
-    }
-
-    function selectDrink(drink) {
-        if(state.currentCoin === 0) {
-            addLog("请先投入硬币！");
-            return;
-        }
-
-        if(state.currentCoin === 0.5) {
-            dispenseDrink(drink);
-            state.currentCoin = 0;
-            return;
-        }
-
-        if(state.currentCoin === 1) {
-            if(state.changeAvailable > 0) {
-                dispenseDrink(drink);
-                state.changeAvailable--;
-                addLog("找零5角硬币");
-                state.currentCoin = 0;
-            } else {
-                addLog("退回1元硬币（零钱不足）");
-                state.currentCoin = 0;
-            }
-        }
-
-        // 更新零钱显示和红灯状态
-        document.getElementById('changeCount').textContent = state.changeAvailable;
-        checkChangeStatus();
-    }
-
-    function dispenseDrink(drink) {
-        addLog(`送出${drink}`);
-    }
-
-    function refillChange() {
-        state.changeAvailable = 5;
-        document.getElementById('changeCount').textContent = state.changeAvailable;
-        addLog("零钱已补充");
-        checkChangeStatus();
-    }
-
-    function addLog(message) {
-        const log = document.getElementById('log');
-        log.innerHTML = `${message}<br>` + log.innerHTML;
-    }
-
-    // 初始化时检查红灯状态
-    checkChangeStatus();
-</script>
-
-
-</body></html>
+<!DOCTYPE html>
+ <html lang="zh-CN">
+ <head>
+     <meta charset="UTF-8">
+     <title>自动售货机模拟器</title>
+     <style>
+         body {
+             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+             max-width: 800px;
+             margin: 20px auto;
+             padding: 20px;
+             background-color: #f0f0f0;
+         }
+ 
+         #vending-machine {
+             background: #ffffff;
+             border-radius: 10px;
+             padding: 20px;
+             box-shadow: 0 0 15px rgba(0,0,0,0.2);
+         }
+ 
+         .status-light {
+             width: 20px;
+             height: 20px;
+             border-radius: 50%;
+             margin: 10px 0;
+             background: grey;
+         }
+ 
+         .red-light {
+             background: #ff4444;
+             box-shadow: 0 0 10px #ff0000;
+         }
+ 
+         .control-panel {
+             display: grid;
+             grid-template-columns: 1fr 1fr;
+             gap: 15px;
+             margin-top: 20px;
+         }
+ 
+         button {
+             padding: 12px;
+             border: none;
+             border-radius: 5px;
+             cursor: pointer;
+             transition: 0.3s;
+         }
+ 
+         button:hover {
+             filter: brightness(1.1);
+         }
+ 
+         .coin-btn {
+             background: #FFD700;
+             color: #333;
+         }
+ 
+         .drink-btn {
+             background: #4CAF50;
+             color: white;
+         }
+ 
+         .info-panel {
+             margin-top: 20px;
+             padding: 15px;
+             background: #e3f2fd;
+             border-radius: 5px;
+         }
+ 
+         #log {
+             margin-top: 10px;
+             padding: 10px;
+             background: white;
+             border: 1px solid #ddd;
+             min-height: 100px;
+         }
+     </style>
+ </head>
+ <body>
+ <div id="vending-machine">
+     <h2>饮料自动售货机（5角/瓶）</h2>
+     <div class="status-light" id="statusLight"></div>
+ 
+     <div class="control-panel">
+         <div>
+             <h3>投币区</h3>
+             <button class="coin-btn" onclick="insertCoin(0.5)">投入5角硬币</button>
+             <button class="coin-btn" onclick="insertCoin(1)">投入1元硬币</button>
+         </div>
+ 
+         <div>
+             <h3>饮料选择</h3>
+             <button class="drink-btn" onclick="selectDrink('橙汁')">橙汁</button>
+             <button class="drink-btn" onclick="selectDrink('啤酒')">啤酒</button>
+         </div>
+     </div>
+ 
+     <div class="info-panel">
+         <h4>系统状态</h4>
+         <div>剩余零钱：<span id="changeCount">5</span>个5角硬币</div>
+         <button onclick="refillChange()">补充零钱</button>
+ 
+         <h4>操作记录</h4>
+         <div id="log"></div>
+     </div>
+ </div>
+ 
+ <script>
+     let state = {
+         currentCoin: 0,
+         changeAvailable: 5, // 初始5个5角硬币
+         redLightOn: false
+     };
+ 
+     // 新增：自动检测零钱状态
+     function checkChangeStatus() {
+         state.redLightOn = state.changeAvailable === 0;
+         updateStatusLight();
+     }
+ 
+     function updateStatusLight() {
+         const light = document.getElementById('statusLight');
+         light.className = state.redLightOn ? 'status-light red-light' : 'status-light';
+     }
+ 
+     function insertCoin(amount) {
+         state.currentCoin = amount;
+         addLog(`已投入${amount}元`);
+     }
+ 
+     function selectDrink(drink) {
+         if(state.currentCoin === 0) {
+             addLog("请先投入硬币！");
+             return;
+         }
+ 
+         if(state.currentCoin === 0.5) {
+             dispenseDrink(drink);
+             state.currentCoin = 0;
+             return;
+         }
+ 
+         if(state.currentCoin === 1) {
+             if(state.changeAvailable > 0) {
+                 dispenseDrink(drink);
+                 state.changeAvailable--;
+                 addLog("找零5角硬币");
+                 state.currentCoin = 0;
+             } else {
+                 addLog("退回1元硬币（零钱不足）");
+                 state.currentCoin = 0;
+             }
+         }
+ 
+         // 更新零钱显示和红灯状态
+         document.getElementById('changeCount').textContent = state.changeAvailable;
+         checkChangeStatus();
+     }
+ 
+     function dispenseDrink(drink) {
+         addLog(`送出${drink}`);
+     }
+ 
+     function refillChange() {
+         state.changeAvailable = 5;
+         document.getElementById('changeCount').textContent = state.changeAvailable;
+         addLog("零钱已补充");
+         checkChangeStatus();
+     }
+ 
+     function addLog(message) {
+         const log = document.getElementById('log');
+         log.innerHTML = `${message}<br>` + log.innerHTML;
+     }
+ 
+     // 初始化时检查红灯状态
+     checkChangeStatus();
+ </script>
+ </body>
+ </html>
